@@ -9,7 +9,7 @@ from boxmot.detectors import get_yolo_inferer
 
 from parsing import parse_opt
 from init_tracker import on_predict_start
-# from clustering.team_rec import team_recognition
+from clustering.team_rec import team_recognition
 
 checker = RequirementsChecker()
 checker.check_packages(('ultralytics @ git+https://github.com/mikel-brostrom/ultralytics.git', ))  # install
@@ -60,32 +60,35 @@ def run(args):
 
     # store custom args in predictor
     yolo.predictor.custom_args = args
-    
-    for r in results:
-        img = yolo.predictor.trackers[0].plot_results(r.orig_img, args.show_trajectories)
-        if args.show is True:   
-            cv2.imshow('BoxMOT', img)     
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord(' ') or key == ord('q'):
-                break
-    
 
+    iteration =1
     for result in results:
-        frame_results=np.array([[]])
+        track_results=np.array([[]])
         cls=result.boxes.cls.numpy()
         boxes=result.boxes.xywh.numpy()
         track_ids=result.boxes.id.numpy()
         
         cls_2d=np.reshape(cls, (-1,1))
-        boxes_2d=np.reshape(boxes, (-1,4))
+        boxes_2d=np.reshape(boxes, (-1,4)) 
         track_ids_2d=np.reshape(track_ids, (-1,1))
-        frame_results=np.hstack((cls_2d, boxes_2d, track_ids_2d))
-        # requests.post("http://localhost:9999", body={"frame_results" : frame_results}, headers={"Authorization" : "Bearer askdfj;aksj;flkajs;dkfj;asd"})
-        input_frame_path = #영상에서 프레임 추출 혹은 영상으로 변환 전 프레임 PATH
-        cluster_results=team_recognition(input_frame_path, frame_results, k=3)
+        track_results=np.hstack((cls_2d, boxes_2d, track_ids_2d))
+        print(args.source, track_results)
+        
+        input_frame_path = f'C:/Users/peter/.conda/envs/kseb/frame_data/img1/{iteration:06d}.jpg'
+        cluster_results=team_recognition(input_frame_path, track_results, k=3)
+        print(cluster_results)
 
+        iteration +=1
     ###plotting results###
-
+'''
+for r in results:
+    img = yolo.predictor.trackers[0].plot_results(r.orig_img, args.show_trajectories)
+    if args.show is True:   
+        cv2.imshow('BoxMOT', img)     
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord(' ') or key == ord('q'):
+            break
+'''
 
 
 
