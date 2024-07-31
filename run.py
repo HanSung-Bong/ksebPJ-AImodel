@@ -85,12 +85,12 @@ async def process_frames_with_yolo(tracking_yolo_model, ocr_yolo_model, frame_qu
             match_dic, ocr_results = id_num_matching(ocr_yolo_model, cluster_result, match_dic, cropped_imgs)
             final_result= [[int(item) for item in sublist] for sublist in ocr_results]
             print(frame_num) #나중에 ocr 까지 끝난 결과와 함께 전송
-            print(ocr_results)
+            print(final_result)
             
         frame_num += 1
         frame_queue.task_done()
 
-async def main(youtube_url, tracking_yolo_model, ocr_yolo_model, save_path, server_url, width=1920, height=1080):
+async def main(youtube_url, tracking_yolo_model, ocr_yolo_model, save_path, width=1920, height=1080):
     frame_queue = asyncio.Queue(maxsize=10)
     try:
         stream_url = get_youtube_stream_url(youtube_url)
