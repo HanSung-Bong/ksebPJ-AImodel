@@ -5,8 +5,8 @@ import cv2
 import warnings
 warnings.filterwarnings('ignore')
 import numpy as np
-from clustering.crop_img import crop_image_by_center
-from clustering.img_size_EQ import resize_and_pad
+from module.crop_img import crop_image_by_center
+from module.img_size_EQ import resize_and_pad
 
 def process_team_clustering(frame, track_results, reference_centroids):
     cluster_result = track_results.tolist()
