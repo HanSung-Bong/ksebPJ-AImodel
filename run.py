@@ -106,7 +106,7 @@ async def main(youtube_url, tracking_yolo_model, ocr_yolo_model, save_path, widt
 
 def run(args):
     tracking_yolo_model = YOLO('player_det_best_v1.pt')
-    ocr_yolo_model = YOLO('ocr_best_8x_v1.pt')
+    ocr_yolo_model = YOLO('8n_100_best.pt')
     youtube_url = args.url
     save_path=args.path
     asyncio.run(main(youtube_url, tracking_yolo_model,ocr_yolo_model, save_path))
