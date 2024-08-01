@@ -1,16 +1,21 @@
 import numpy as np
+import cv2
+
 
 def id_num_matching(ocr_model, cluster_results, match_dict, cropped_imgs):
     index=0
-    for cropped_img in cropped_imgs:    
-        ocr_results=ocr_model.predict(cropped_img, imgsz=160)
+    for cropped_img in cropped_imgs:
+        print(type(cropped_img))
+        ocr_results=ocr_model.predict(cropped_img, imgsz=160,conf=0.6, save_txt=True, save_conf=True)
+        #ocr_results[0].save(f'image{index:02d}.jpg', conf=False)
         try:
             nums = ocr_results[0].boxes.cls.cpu().numpy()
             conf= ocr_results[0].boxes.conf.cpu().numpy()
+            print(nums,conf)
             id=str(cluster_results[index][5])
             if nums.shape==(1,): ## 한개의 클래스만 인식된 경우
                 num_1=int(nums.item())
-                conf_1=float(conf.item())
+                conf_1=np.round(float(conf.item()),4)
                 if id not in match_dict:
                     cluster_results[index].append(num_1)
                     match_dict[id] = {}
@@ -31,7 +36,7 @@ def id_num_matching(ocr_model, cluster_results, match_dict, cropped_imgs):
                 position_x.append(position_2D[0,0])
                 position_x.append(position_2D[1,0])
                 if abs(position_x[0]-position_x[1])>2:   #동일한 위치에 두번 인식되지 않은 경우
-                    conf_2=np.max(conf)
+                    conf_2=np.round(float(np.max(conf)),4)
                     if position_x[0]<position_x[1]:
                         num_2 = int(''.join(map(lambda x: str(int(x)), nums)))
                     elif position_x[0]>position_x[1]:
@@ -55,10 +60,10 @@ def id_num_matching(ocr_model, cluster_results, match_dict, cropped_imgs):
                     num_arr=np.reshape(nums,(-1,1))
                     if conf_arr[0,0]>conf_arr[1,0]: #confidence 값이 더 큰 숫자를 사용
                         num_2=int(num_arr[0,0])
-                        conf_2=float(np.max(conf))
+                        conf_2=np.round(float(np.max(conf)),4)
                     else:
                         num_2=int(num_arr[1,0])
-                        conf_2=float(np.max(conf))
+                        conf_2=np.round(float(np.max(conf)),4)
                     if id not in match_dict:
                         cluster_results[index].append(num_2)
                         match_dict[id]['num']=num_2

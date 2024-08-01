@@ -19,7 +19,7 @@ while cap.isOpened():
     if not ret:
         break
     
-    results = tracking_yolo_model.track(frame, imgsz=1920, tracker='bytetrack.yaml', persist=True, save=True, show_conf=False)
+    results = tracking_yolo_model.track(frame, imgsz=1920, tracker='bytetrack.yaml', persist=True, save_crop=True)
     for track_result in results:
         track_results = np.array([[]])
         cls = track_result.boxes.cls.int().cpu().numpy()
