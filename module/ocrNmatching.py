@@ -4,13 +4,12 @@ import cv2
 
 def id_num_matching(ocr_model, cluster_results, match_dict, cropped_imgs):
     index=0
-    for cropped_img in cropped_imgs:
-        print(type(cropped_img))
-        ocr_results=ocr_model.predict(cropped_img, imgsz=160,conf=0.6, save_txt=True, save_conf=True)
-        #ocr_results[0].save(f'image{index:02d}.jpg', conf=False)
+
+    ocr_results=ocr_model.predict(cropped_imgs, imgsz=160,conf=0.6, save_txt=True, save_conf=True)
+    for ocr_result in ocr_results
         try:
-            nums = ocr_results[0].boxes.cls.cpu().numpy()
-            conf= ocr_results[0].boxes.conf.cpu().numpy()
+            nums = ocr_result.boxes.cls.cpu().numpy()
+            conf= ocr_result.boxes.conf.cpu().numpy()
             print(nums,conf)
             id=str(cluster_results[index][5])
             if nums.shape==(1,): ## 한개의 클래스만 인식된 경우
@@ -30,7 +29,7 @@ def id_num_matching(ocr_model, cluster_results, match_dict, cropped_imgs):
                         match_dict[id]['conf']=conf_1
                 index+=1
             elif nums.shape==(2,): ## 두개의 클래스가 인식된 경우
-                position=ocr_results[0].boxes.xywh.cpu().numpy()
+                position=ocr_result.boxes.xywh.cpu().numpy()
                 position_2D = np.reshape(position, (-1, 4))
                 position_x=[]
                 position_x.append(position_2D[0,0])
