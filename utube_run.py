@@ -6,7 +6,6 @@ import cv2
 import json
 import asyncio
 from queue import Queue
-import nest_asyncio
 from ultralytics import YOLO
 import requests
 from PIL import Image
@@ -16,13 +15,6 @@ import torch
 from module.ocrNmatching import id_num_matching
 from module.reference_cluster import process_team_clustering
 
-# nest_asyncio 적용
-nest_asyncio.apply()
-
-# Parser 정의
-parser = argparse.ArgumentParser(description="YOLOv8 Tracking")
-parser.add_argument("--url", type=str, required=True, help="YouTube video URL to process")
-parser.add_argument("--path", type=str, default="content/gdrive/MyDrive/KSEB_익명성/envs_test", help="Path to save result txt")
 
 def get_youtube_stream_url(url):
     ydl_opts = {
@@ -112,7 +104,7 @@ async def process_frames_with_yolo(tracking_yolo_model, ocr_yolo_model, frame_qu
                 final_result.append(player_info)
             print(final_result)
             response = send_list_to_server(final_result)
-            if response:
+            if response:    
                 print("server response: ", response)   
             #save_to_textfile(final_result,f'txt/{frame_num:03d}.txt')
         frame_num += 1
