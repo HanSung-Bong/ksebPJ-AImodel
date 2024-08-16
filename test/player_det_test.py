@@ -7,8 +7,8 @@ import torch
 from boxmot.utils.checks import RequirementsChecker
 from boxmot.detectors import get_yolo_inferer
 
-from parsing import parse_opt
-from init_tracker import on_predict_start
+from test.parsing import parse_opt
+from test.init_tracker import on_predict_start
 from clustering.team_rec import team_recognition
 
 checker = RequirementsChecker()

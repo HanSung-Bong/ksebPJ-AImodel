@@ -35,7 +35,7 @@ def allocate_buffers(engine):
         tensor_name = engine.get_tensor_name(i)
         size = trt.volume(engine.get_tensor_shape(tensor_name))
         dtype = trt.nptype(engine.get_tensor_dtype(tensor_name))
-
+        print("input_size: ",size)
         host_mem = cuda.pagelocked_empty(size, dtype)
         device_mem = cuda.mem_alloc(host_mem.nbytes)
 
@@ -58,10 +58,13 @@ def ocr_preprocess(images):
     input_tensors=np.ascontiguousarray(input_tensors)
     return input_tensors
 
-def ocr_postprocess(ocr_results, batch, prev_track, prev_cluster):
-    outputs = ocr_results[0].host.reshape(batch,14,525).transpose(0,2,1)
+def ocr_postprocess(ocr_results, batch):
+    print("init postprocess")
+    outputs = ocr_results[0].host.reshape(20,14,525).transpose(0,2,1)
+    print(outputs)
     results=[]
-    for output in outputs:
+    for j in range(batch):
+        output=outputs[j]
         rows = output.shape[0]
         boxes = []
         scores = []
@@ -83,10 +86,10 @@ def ocr_postprocess(ocr_results, batch, prev_track, prev_cluster):
                 class_ids.append(np.argmax(classes_scores))
         # Apply NMS (Non-maximum suppression)
         result_boxes = cv2.dnn.NMSBoxes(boxes, scores, 0.3, 0.45)
+        print(result_boxes)
         for index in result_boxes:
             result["cls"].append(class_ids[index])
             result["boxes"].append([boxes[index]])
             result["conf"].append(scores[index])
-        results.append(result)
-    results=SimpleNamespace(**results)
+        results.append(SimpleNamespace(**result))
     return results
